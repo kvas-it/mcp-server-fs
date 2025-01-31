@@ -1,0 +1,15 @@
+[project]
+name = "mcp-server-fs"
+version = "0.1.0"
+description = "MCP server for file system"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "mcp[cli]>=1.2.1",
+    "ruff>=0.9.4",
+]
+
+[dependency-groups]
+dev = [
+    "nodeenv>=1.9.1",
+]

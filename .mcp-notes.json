@@ -1,0 +1,18 @@
+{
+  "server.py": {
+    "purpose": "Main server file implementing all filesystem operations and tools",
+    "tools": "ls, cd, read/write files, patch, grep, file operations, notes system, multi-file operations (ls_many, read_files, summarize)",
+    "tools_by_category": "Navigation: ls, cd\nFile IO: read_file, write_file\nFile Ops: mkdir, rm, rmdir, cp, mv\nAnalysis: summary, grep\nChanges: patch_file\nMetadata: add_note, get_note, list_notes, remove_note"
+  },
+  "pyproject.toml": {
+    "purpose": "Project configuration and dependencies",
+    "dependencies": "mcp[cli]>=1.2.1, ruff>=0.9.4"
+  },
+  "README.md": {
+    "purpose": "Documentation for the MCP file system server and its tools"
+  },
+  ".": {
+    "project_type": "MCP server implementing file system operations",
+    "core_files": "server.py: Main implementation\npyproject.toml: Dependencies\nREADME.md: Documentation"
+  }
+}
