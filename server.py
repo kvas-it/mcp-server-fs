@@ -203,28 +203,12 @@ def add_note(path: str, key: str, note: str) -> None:
 
 
 @mcp.tool()
-def get_note(path: str, key: str) -> Optional[str]:
-    """Get a specific note about a file/directory.
+def get_all_notes() -> Dict[str, Dict[str, str]]:
+    """Get all notes for all paths.
 
-    :param path: Path to file/directory
-    :param key: Note key to retrieve
-    :returns: Note content if exists, None otherwise
+    :returns: Dict mapping paths to their notes (which are key-value dicts)
     """
-    rel_path = _get_relative_path(path)
-    notes = _load_notes()
-    return notes.get(rel_path, {}).get(key)
-
-
-@mcp.tool()
-def list_notes(path: str) -> List[str]:
-    """List all note keys for a file/directory.
-
-    :param path: Path to file/directory
-    :returns: List of note keys
-    """
-    rel_path = _get_relative_path(path)
-    notes = _load_notes()
-    return list(notes.get(rel_path, {}).keys())
+    return _load_notes()
 
 
 @mcp.tool()

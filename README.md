@@ -21,9 +21,8 @@ reading, writing, and analyzing files.
 * `mv(src, dst)` - Move file or directory
 * `grep(pattern, path)` - Search for regex pattern in file(s)
 * `add_note(path, key, note)` - Add/update a note about a file/directory
-* `get_note(path, key)` - Get a specific note about a file/directory
-* `list_notes(path)` - List all note keys for a file/directory
 * `remove_note(path, key)` - Remove a note
+* `get_all_notes()` - Get all notes for all paths
 * `ls_many(paths)` - List contents of multiple directories, returns dict
   mapping paths to file lists
 * `read_files(paths)` - Read multiple files, returns dict mapping paths to
