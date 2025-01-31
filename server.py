@@ -3,7 +3,7 @@ import ast
 import re
 import json
 import shutil
-from typing import List, Tuple, Dict, Optional
+from typing import List, Tuple, Dict
 from pathlib import Path
 
 from mcp.server.fastmcp import FastMCP
