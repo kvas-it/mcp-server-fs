@@ -62,12 +62,18 @@ def patch_file(path: str, patches: List[Tuple[str, str]]) -> None:
 
     :param path: Path to the file to patch. Can be relative (see cd tool).
     :param patches: List of (search_text, replace_text) tuples.
+
+    Ideally, try to replace entire lines to avoid partial matches. Including
+    a few lines of context in the search text helps to ensure the right match.
     """
     with open(path, "rt", encoding="utf-8") as f:
         content = f.read()
 
     for search, replace in patches:
+        old_content = content
         content = content.replace(search, replace)
+        if old_content == content:
+            raise ValueError(f"Search text not found in file:\n\n{search}")
 
     with open(path, "wt", encoding="utf-8") as f:
         f.write(content)
