@@ -29,3 +29,23 @@ reading, writing, and analyzing files.
   contents
 * `summarize(paths)` - Generate summaries for multiple files, returns dict
   mapping paths to summaries
+* `work_on(path)` - Change to directory, list its contents, and get all notes.
+  Useful for getting familiar with a project at the start of a chat
+
+## Roadmap
+
+- [x] Add linting and formatting via `ruff` (via subprocess).
+- [x] Add `work_on` tool for faster init.
+- [ ] Add `find_files` function to search for files by name.
+- [ ] Add support for git operations (via subprocess).
+- [ ] Add support for running tests (via pytest).
+- [ ] Rename to `mcp-server-pydev` becuase it's a better fit.
+- [ ] Add `patch_files` function to apply multiple patches to multiple files.
+
+## Ideas
+
+- [ ] Modular command loading (with reload) via `importlib`. We'd separate more
+  opinionated commands (like `summary`, `git`, `ruff`, `pytest`) from more
+  generic ones (like `ls`). It would also become easier to add new commands
+  without restarting the server.
+- [ ] Add recursive `ls`?

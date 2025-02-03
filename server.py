@@ -3,10 +3,13 @@ import ast
 import re
 import json
 import shutil
-from typing import List, Tuple, Dict
+import subprocess
+from typing import List, Tuple, Dict, Union
 from pathlib import Path
 
 from mcp.server.fastmcp import FastMCP
+
+RUFF_PATH = Path(__file__).parent / ".venv" / "bin" / "ruff"
 
 mcp = FastMCP("FileSystem")
 
@@ -26,9 +29,10 @@ def cd(path: str) -> None:
     """Change the current working directory.
 
     :param path: New working directory. Can be relative to current working
-                 directory.
+                 directory. Supports home directory expansion (~/path).
     """
-    os.chdir(path)
+    expanded_path = os.path.expanduser(path)
+    os.chdir(expanded_path)
 
 
 @mcp.tool()
@@ -289,3 +293,59 @@ def summarize(paths: list[str]) -> Dict[str, list[str]]:
     :returns: List of summaries in same order as input paths
     """
     return {path: summary(path) for path in paths}
+
+
+@mcp.tool()
+def work_on(path: str) -> Dict[str, Union[List[str], Dict[str, Dict[str, str]]]]:
+    """Change to directory, list its contents, and get all notes.
+    Useful for getting familiar with a project at the start of a chat.
+
+    :param path: Directory to work on. Supports home expansion (~/path).
+    :returns: Dict with 'files' and 'notes' keys
+    """
+    cd(path)
+    return {"files": ls("."), "notes": get_all_notes()}
+
+
+@mcp.tool()
+def ruff_check(paths: list[str]) -> Dict[str, Union[str, int]]:
+    """Run ruff linter on specified files. Useful to check that nothing was broken.
+
+    :param paths: List of file paths to check
+    :returns: Dict with 'output' and 'exit_code' keys
+    """
+    try:
+        result = subprocess.run(
+            [str(RUFF_PATH), "check"] + paths,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        return {"output": result.stdout + result.stderr, "exit_code": result.returncode}
+    except FileNotFoundError:
+        return {
+            "output": "Error: ruff not found. Please install ruff package.",
+            "exit_code": -1,
+        }
+
+
+@mcp.tool()
+def ruff_format(paths: list[str]) -> Dict[str, Union[str, int]]:
+    """Format files using ruff. Useful for fixing formatting issues after edits.
+
+    :param paths: List of file paths to format
+    :returns: Dict with 'output' and 'exit_code' keys
+    """
+    try:
+        result = subprocess.run(
+            [str(RUFF_PATH), "format"] + paths,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        return {"output": result.stdout + result.stderr, "exit_code": result.returncode}
+    except FileNotFoundError:
+        return {
+            "output": "Error: ruff not found. Please install ruff package.",
+            "exit_code": -1,
+        }
