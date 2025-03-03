@@ -24,9 +24,9 @@ reading, writing, and analyzing files.
 * `cp(src, dst)` - Copy file or directory
 * `mv(src, dst)` - Move file or directory
 * `grep(pattern, path)` - Search for regex pattern in file(s)
-* `add_note(path, key, note)` - Add/update a note about a file/directory
-* `remove_note(path, key)` - Remove a note
-* `get_all_notes()` - Get all notes for all paths
+* `shell_command(command, args=None, cmdline=None, timeout=30)` - Run shell commands and capture their output
+* `ruff_check(paths)` - Run ruff linter on specified files
+* `ruff_format(paths)` - Format files using ruff
 * `ls_many(paths)` - List contents of multiple directories, returns dict
   mapping paths to file lists
 * `read_files(paths)` - Read multiple files, returns dict mapping paths to

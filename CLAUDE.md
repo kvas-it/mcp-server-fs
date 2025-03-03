@@ -16,10 +16,12 @@
   - File editing: edit_file, apply_diff
   - Search: grep
   - File operations: mkdir, rm, rmdir, cp, mv
+  - Shell command execution: shell_command
   - Notes system: Using CLAUDE.md file
   - Multi-file operations: ls_many, read_files, summarize
   - Code quality tools: ruff_check, ruff_format
 - **API Changes**:
+  - 2025-03-03: Added 'shell_command' tool to execute shell commands with captured output
   - 2025-03-03: Replaced JSON-based notes system with markdown-based CLAUDE.md
   - 2024-01-31: Added batch operations (ls_many, read_files, summarize) and simplified notes API
   - 2025-03-03: Renamed 'patch_file' to 'edit_file' for better clarity

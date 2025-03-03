@@ -367,3 +367,59 @@ def ruff_format(paths: list[str]) -> Dict[str, Union[str, int]]:
             "output": "Error: ruff not found. Please install ruff package.",
             "exit_code": -1,
         }
+
+
+@mcp.tool()
+def shell_command(
+    command: str, args: list[str] = None, cmdline: str = None, timeout: int = 30
+) -> Dict[str, Union[str, int]]:
+    """Run a shell command and return its output.
+
+    :param command: The command to run (ignored if cmdline is provided)
+    :param args: List of arguments for the command (ignored if cmdline is provided)
+    :param cmdline: Full command line string including all arguments (alternative to command+args)
+    :param timeout: Maximum execution time in seconds (default: 30)
+    :returns: Dict with 'stdout', 'stderr', and 'exit_code' keys
+    """
+    try:
+        if cmdline is not None:
+            # Use shell=True for convenience with complex commands
+            result = subprocess.run(
+                cmdline,
+                shell=True,
+                capture_output=True,
+                text=True,
+                check=False,
+                timeout=timeout,
+            )
+        else:
+            # Use args list for safer command execution
+            if args is None:
+                args = []
+            result = subprocess.run(
+                [command] + args,
+                capture_output=True,
+                text=True,
+                check=False,
+                timeout=timeout,
+            )
+
+        return {
+            "stdout": result.stdout,
+            "stderr": result.stderr,
+            "exit_code": result.returncode,
+        }
+    except FileNotFoundError:
+        return {"stdout": "", "stderr": "Error: Command not found.", "exit_code": 127}
+    except subprocess.TimeoutExpired:
+        return {
+            "stdout": "",
+            "stderr": f"Error: Command timed out after {timeout} seconds.",
+            "exit_code": 124,
+        }
+    except Exception as e:
+        return {
+            "stdout": "",
+            "stderr": f"Error executing command: {str(e)}",
+            "exit_code": 1,
+        }
