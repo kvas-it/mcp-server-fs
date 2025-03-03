@@ -1,9 +1,7 @@
 # MCP File System Server
 
-
-
-MCP server providing basic file system operations. Supports navigation,
-reading, writing, and analyzing files.
+MCP server providing file system operations. Supports navigation, reading,
+writing, analyzing files and command execution.
 
 ## Tools
 
@@ -25,6 +23,7 @@ reading, writing, and analyzing files.
 * `mv(src, dst)` - Move file or directory
 * `grep(pattern, path)` - Search for regex pattern in file(s)
 * `shell_command(command, args=None, cmdline=None, timeout=30)` - Run shell commands and capture their output
+  > **⚠️ Security Warning**: This tool allows arbitrary command execution on the host system. Always inspect and validate commands before allowing them to run, especially if the input source is untrusted.
 * `ruff_check(paths)` - Run ruff linter on specified files
 * `ruff_format(paths)` - Format files using ruff
 * `ls_many(paths)` - List contents of multiple directories, returns dict
@@ -41,8 +40,8 @@ reading, writing, and analyzing files.
 - [x] Add linting and formatting via `ruff` (via subprocess).
 - [x] Add `work_on` tool for faster init.
 - [ ] Add `find_files` function to search for files by name.
-- [ ] Add support for git operations (via subprocess).
-- [ ] Add support for running tests (via pytest).
+- [x] Add support for git operations (via subprocess).
+- [x] Add support for running tests (via pytest).
 - [ ] Rename to `mcp-server-pydev` becuase it's a better fit.
 - [ ] Add `edit_files` function to apply multiple edits to multiple files.
 
