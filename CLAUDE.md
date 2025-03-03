@@ -13,19 +13,19 @@
 - **Purpose**: Main server file implementing all filesystem operations and tools
 - **Tools**: 
   - Basic operations: ls, cd, read/write files
-  - File editing: edit_file, apply_diff
+  - File editing: edit_file
   - Search: grep
   - File operations: mkdir, rm, rmdir, cp, mv
   - Shell command execution: shell_command
   - Notes system: Using CLAUDE.md file
-  - Multi-file operations: ls_many, read_files, summarize
+  - Multi-file operations: read_files, summarize
   - Code quality tools: ruff_check, ruff_format
 - **API Changes**:
   - 2025-03-03: Added 'shell_command' tool to execute shell commands with captured output
   - 2025-03-03: Replaced JSON-based notes system with markdown-based CLAUDE.md
-  - 2024-01-31: Added batch operations (ls_many, read_files, summarize) and simplified notes API
+  - 2024-01-31: Added batch operations (read_files, summarize) and simplified notes API
   - 2025-03-03: Renamed 'patch_file' to 'edit_file' for better clarity
-  - 2025-03-03: Added 'apply_diff' tool to apply unified diffs to files using system's patch command
+
 - **Server Changes**: The server needs to be restarted after making changes to this file for them to take effect.
 
 ### pyproject.toml

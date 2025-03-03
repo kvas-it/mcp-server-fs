@@ -5,90 +5,39 @@ writing, analyzing files and command execution.
 
 ## Tools
 
+### File and Directory Operations
 * `ls(path)` - List directory contents
-* `cd(path)` - Change working directory  
+* `cd(path)` - Change working directory (supports home directory expansion with ~)
 * `read_file(path)` - Read file contents
 * `write_file(path, content)` - Write content to a file
-* `edit_file(path, patches)` - Apply multiple search/replace operations to a
-  file
-* `apply_diff(diff)` - Apply a unified diff to files in the working directory.
-  Supports both standard and git-style diffs with `a/` and `b/` prefixes
-* `summary(path)` - Generate summary of Python (.py) and Markdown (.md) files:
-  - Python: Lists functions and classes
-  - Markdown: Lists headers (lines starting with #)
 * `mkdir(path)` - Create directory
 * `rm(path)` - Remove file or empty directory
 * `rmdir(path)` - Remove directory and contents recursively  
 * `cp(src, dst)` - Copy file or directory
 * `mv(src, dst)` - Move file or directory
+
+### Editing and Searching
+* `edit_file(path, changes)` - Apply multiple search/replace operations to a
+  file, where changes is a list of (search_text, replace_text) tuples
 * `grep(pattern, path)` - Search for regex pattern in file(s)
-* `shell_command(command, args=None, cmdline=None, timeout=30)` - Run shell commands and capture their output
-  > **⚠️ Security Warning**: This tool allows arbitrary command execution on the host system. Always inspect and validate commands before allowing them to run, especially if the input source is untrusted.
-* `ruff_check(paths)` - Run ruff linter on specified files
-* `ruff_format(paths)` - Format files using ruff
-* `ls_many(paths)` - List contents of multiple directories, returns dict
-  mapping paths to file lists
-* `read_files(paths)` - Read multiple files, returns dict mapping paths to
-  contents
-* `summarize(paths)` - Generate summaries for multiple files, returns dict
-  mapping paths to summaries
-* `work_on(path)` - Change to directory, list its contents, and get all notes.
+
+### Analysis
+* `summary(path)` - Generate summary of Python (.py) and Markdown (.md) files:
+  - Python: Lists functions and classes
+  - Markdown: Lists headers (lines starting with #)
+
+### Batch Operations
+* `read_files(paths)` - Read multiple files, returns dict mapping paths to contents
+* `summarize(paths)` - Generate summaries for multiple files, returns dict mapping paths to summaries
+
+### Project Navigation
+* `work_on(path)` - Change to directory, list its contents, and get the notes from CLAUDE.md.
   Useful for getting familiar with a project at the start of a chat
 
-## Roadmap
+### Code Quality
+* `ruff_check(paths)` - Run ruff linter on specified files
+* `ruff_format(paths)` - Format files using ruff
 
-- [x] Add linting and formatting via `ruff` (via subprocess).
-- [x] Add `work_on` tool for faster init.
-- [ ] Add `find_files` function to search for files by name.
-- [x] Add support for git operations (via subprocess).
-- [x] Add support for running tests (via pytest).
-- [ ] Rename to `mcp-server-pydev` becuase it's a better fit.
-- [ ] Add `edit_files` function to apply multiple edits to multiple files.
-
-## Ideas
-
-- [ ] Modular command loading (with reload) via `importlib`. We'd separate more
-  opinionated commands (like `summary`, `git`, `ruff`, `pytest`) from more
-  generic ones (like `ls`). It would also become easier to add new commands
-  without restarting the server.
-- [ ] Add recursive `ls`?
-
-## Using the Edit Tools
-
-This server provides two complementary tools for modifying files:
-
-### edit_file
-
-The `edit_file` tool is useful for making targeted changes to specific parts of a file using search/replace operations.
-
-```python
-edit_file("file.py", [("old text", "new text"), ("another old part", "another new part")])
-```
-
-Best practices:
-* Include several lines of context around the text you want to replace to ensure unique matches
-* Replace entire lines rather than partial lines when possible
-* Make changes one at a time for complex edits
-
-### apply_diff
-
-The `apply_diff` tool is ideal for more complex changes, especially when modifying multiple parts of a file or multiple files at once. It uses the system's `patch` command to apply unified diffs.
-
-```python
-apply_diff("""
---- a/file.py
-+++ b/file.py
-@@ -10,7 +10,7 @@
- unchanged line
- unchanged line
--line to remove
-+line to add instead
- unchanged line
-""")
-```
-
-Best practices:
-* Ensure each diff is well-formed with proper context lines
-* The tool supports both standard unified diffs and git-style diffs with `a/` and `b/` prefixes
-* For complex multi-file patches, consider applying them one file at a time for better error handling
-* Make sure target files exist in the working directory before applying patches
+### Command Execution
+* `shell_command(command, args=None, cmdline=None, timeout=30)` - Run shell commands and capture their output
+  > **⚠️ Security Warning**: This tool allows arbitrary command execution on the host system. Always inspect and validate commands before allowing them to run, especially if the input source is untrusted.
