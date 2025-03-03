@@ -1,8 +1,8 @@
 {
   "server.py": {
     "purpose": "Main server file implementing all filesystem operations and tools",
-    "tools": "ls, cd, read/write files, patch, grep, file operations, notes system, multi-file operations (ls_many, read_files, summarize), code quality tools (ruff_check, ruff_format)",
-    "api_changes": "2024-01-31: Added batch operations (ls_many, read_files, summarize) and simplified notes API",
+    "tools": "ls, cd, read/write files, edit_file, apply_diff, grep, file operations, notes system, multi-file operations (ls_many, read_files, summarize), code quality tools (ruff_check, ruff_format)",
+    "api_changes": "2024-01-31: Added batch operations (ls_many, read_files, summarize) and simplified notes API\n2025-03-03: Renamed 'patch_file' to 'edit_file' for better clarity\n2025-03-03: Added 'apply_diff' tool to apply unified diffs to files using system's patch command",
     "server_changes": "The server needs to be restarted after making changes to this file for them to take effect."
   },
   "pyproject.toml": {

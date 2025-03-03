@@ -1,5 +1,7 @@
 # MCP File System Server
 
+_Tested with the renamed edit_file tool_
+
 MCP server providing basic file system operations. Supports navigation,
 reading, writing, and analyzing files.
 
@@ -9,8 +11,10 @@ reading, writing, and analyzing files.
 * `cd(path)` - Change working directory  
 * `read_file(path)` - Read file contents
 * `write_file(path, content)` - Write content to a file
-* `patch_file(path, patches)` - Apply multiple search/replace operations to a
+* `edit_file(path, patches)` - Apply multiple search/replace operations to a
   file
+* `apply_diff(diff)` - Apply a unified diff to files in the working directory.
+  Works best with direct file paths (without `a/` and `b/` prefixes)
 * `summary(path)` - Generate summary of Python (.py) and Markdown (.md) files:
   - Python: Lists functions and classes
   - Markdown: Lists headers (lines starting with #)
@@ -40,7 +44,7 @@ reading, writing, and analyzing files.
 - [ ] Add support for git operations (via subprocess).
 - [ ] Add support for running tests (via pytest).
 - [ ] Rename to `mcp-server-pydev` becuase it's a better fit.
-- [ ] Add `patch_files` function to apply multiple patches to multiple files.
+- [ ] Add `edit_files` function to apply multiple edits to multiple files.
 
 ## Ideas
 

@@ -4,6 +4,7 @@ import re
 import json
 import shutil
 import subprocess
+
 from typing import List, Tuple, Dict, Union
 from pathlib import Path
 
@@ -57,10 +58,10 @@ def write_file(path: str, content: str) -> None:
 
 
 @mcp.tool()
-def patch_file(path: str, patches: List[Tuple[str, str]]) -> None:
+def edit_file(path: str, patches: List[Tuple[str, str]]) -> None:
     """Apply sequence of search/replace operations to a file.
 
-    :param path: Path to the file to patch. Can be relative (see cd tool).
+    :param path: Path to the file to edit. Can be relative (see cd tool).
     :param patches: List of (search_text, replace_text) tuples.
 
     Ideally, try to replace entire lines to avoid partial matches. Including
@@ -77,6 +78,81 @@ def patch_file(path: str, patches: List[Tuple[str, str]]) -> None:
 
     with open(path, "wt", encoding="utf-8") as f:
         f.write(content)
+
+
+@mcp.tool()
+def apply_diff(diff: str) -> Dict[str, str]:
+    """Apply a unified diff to files in the working directory.
+
+    :param diff: A unified diff string (output of diff -u or git diff)
+    :returns: Dictionary mapping filenames to operation results
+
+    The unified diff should include file paths and can contain multiple file changes.
+    Each change is applied to the corresponding file in the working directory.
+
+    Example diff format:
+    ```
+    --- a/path/to/file.py
+    +++ b/path/to/file.py
+    @@ -10,7 +10,7 @@
+     unchanged line
+     unchanged line
+    -line to remove
+    +line to add instead
+     unchanged line
+    ```
+    """
+    import tempfile
+    import os
+
+    # Write the diff to a temporary file
+    with tempfile.NamedTemporaryFile(
+        mode="w", delete=False, suffix=".patch"
+    ) as temp_file:
+        temp_file.write(diff)
+        patch_file = temp_file.name
+
+    results = {}
+
+    try:
+        # Apply the patch with -p0 (no path stripping)
+        result = subprocess.run(
+            ["patch", "-p0", "-i", patch_file, "--forward"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        # Extract files being patched using regex
+        file_pattern = re.compile(r"^\+\+\+ (.+)$", re.MULTILINE)
+        modified_files = [m.group(1) for m in file_pattern.finditer(diff)]
+
+        # Remove 'b/' prefix if it exists
+        modified_files = [f[2:] if f.startswith("b/") else f for f in modified_files]
+
+        # Process results
+        if result.returncode == 0:
+            # Success
+            for file in modified_files:
+                results[file] = "Successfully applied changes"
+        else:
+            # Error
+            error_msg = result.stderr.strip() or result.stdout.strip()
+            for file in modified_files:
+                results[file] = f"Error applying changes: {error_msg}"
+            results["error"] = error_msg
+
+    except Exception as e:
+        results["error"] = f"Error: {str(e)}"
+
+    finally:
+        # Clean up temporary file
+        try:
+            os.unlink(patch_file)
+        except Exception:
+            pass
+
+    return results
 
 
 @mcp.tool()
