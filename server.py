@@ -90,6 +90,14 @@ def apply_diff(diff: str) -> Dict[str, str]:
     The unified diff should include file paths and can contain multiple file changes.
     Each change is applied to the corresponding file in the working directory.
 
+    Supports git-style diffs with 'a/' and 'b/' prefixes.
+    For best results:
+    - Ensure each file section is properly formatted with file paths, hunk
+      headers, and context lines
+    - When patching multiple files, consider applying them separately for
+      better error handling
+    - Make sure the files being patched exist in the working directory
+
     Example diff format:
     ```
     --- a/path/to/file.py
@@ -117,7 +125,7 @@ def apply_diff(diff: str) -> Dict[str, str]:
     try:
         # Apply the patch with -p0 (no path stripping)
         result = subprocess.run(
-            ["patch", "-p0", "-i", patch_file, "--forward"],
+            ["patch", "-p1", "-i", patch_file, "--forward"],
             capture_output=True,
             text=True,
             check=False,
