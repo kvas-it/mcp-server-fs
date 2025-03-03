@@ -1,7 +1,6 @@
 import os
 import ast
 import re
-import json
 import shutil
 import subprocess
 
@@ -242,86 +241,6 @@ def mv(src: str, dst: str) -> None:
     shutil.move(src, dst)
 
 
-def _get_notes_file() -> Path:
-    """Find the root directory with .mcp-notes.json"""
-    current = Path.cwd()
-    while current != current.parent:
-        if (current / ".mcp-notes.json").exists():
-            return current / ".mcp-notes.json"
-        current = current.parent
-    return Path.cwd() / ".mcp-notes.json"
-
-
-def _load_notes() -> Dict[str, Dict[str, str]]:
-    """Load notes from file, creating if doesn't exist"""
-    notes_file = _get_notes_file()
-    if notes_file.exists():
-        with open(notes_file, "r") as f:
-            return json.load(f)
-    return {}
-
-
-def _save_notes(notes: Dict[str, Dict[str, str]]) -> None:
-    """Save notes to file"""
-    notes_file = _get_notes_file()
-    with open(notes_file, "w") as f:
-        json.dump(notes, f, indent=2)
-
-
-def _get_relative_path(path: str) -> str:
-    """Convert path to be relative to notes file location"""
-    abs_path = Path(path).absolute()
-    notes_root = _get_notes_file().parent.absolute()
-    try:
-        return str(abs_path.relative_to(notes_root))
-    except ValueError:
-        raise ValueError(f"Path {path} is not under notes root {notes_root}")
-
-
-@mcp.tool()
-def add_note(path: str, key: str, note: str) -> None:
-    """Add or update a note about a file/directory.
-
-    :param path: Path to file/directory to annotate
-    :param key: Note key/category
-    :param note: Note content
-    """
-    rel_path = _get_relative_path(path)
-    notes = _load_notes()
-
-    if rel_path not in notes:
-        notes[rel_path] = {}
-    notes[rel_path][key] = note
-
-    _save_notes(notes)
-
-
-@mcp.tool()
-def get_all_notes() -> Dict[str, Dict[str, str]]:
-    """Get all notes for all paths.
-
-    :returns: Dict mapping paths to their notes (which are key-value dicts)
-    """
-    return _load_notes()
-
-
-@mcp.tool()
-def remove_note(path: str, key: str) -> None:
-    """Remove a note about a file/directory.
-
-    :param path: Path to file/directory
-    :param key: Note key to remove
-    """
-    rel_path = _get_relative_path(path)
-    notes = _load_notes()
-
-    if rel_path in notes and key in notes[rel_path]:
-        del notes[rel_path][key]
-        if not notes[rel_path]:  # Remove empty entries
-            del notes[rel_path]
-        _save_notes(notes)
-
-
 @mcp.tool()
 def grep(pattern: str, path: str) -> List[str]:
     """Search for pattern in file(s).
@@ -385,8 +304,17 @@ def summarize(paths: list[str]) -> Dict[str, list[str]]:
     return {path: summary(path) for path in paths}
 
 
+def _read_claude_md() -> str:
+    """Read the CLAUDE.md file, or return empty string if not found"""
+    claude_md = Path.cwd() / "CLAUDE.md"
+    if claude_md.exists():
+        with open(claude_md, "r", encoding="utf-8") as f:
+            return f.read()
+    return ""
+
+
 @mcp.tool()
-def work_on(path: str) -> Dict[str, Union[List[str], Dict[str, Dict[str, str]]]]:
+def work_on(path: str) -> Dict[str, Union[List[str], str]]:
     """Change to directory, list its contents, and get all notes.
     Useful for getting familiar with a project at the start of a chat.
 
@@ -394,7 +322,7 @@ def work_on(path: str) -> Dict[str, Union[List[str], Dict[str, Dict[str, str]]]]
     :returns: Dict with 'files' and 'notes' keys
     """
     cd(path)
-    return {"files": ls("."), "notes": get_all_notes()}
+    return {"files": ls("."), "notes": _read_claude_md()}
 
 
 @mcp.tool()
